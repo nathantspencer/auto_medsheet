@@ -4,37 +4,29 @@ import re
 import code
 import sys
 
-# pdr_surf
+# pdr_surf function
 def pdr_surf(medications):
 
     # for each medication passed...
     for medication in medications:
-        med_link = ''
-        first_letter = medication[0]
 
         # search all pages of drugs starting with that letter
-        for page_number in range(1,19):
-            search_url = 'http://www.pdr.net/browse-by-drug-name?letter=' + \
-                first_letter + '&currentpage=' + str(page_number)
-            response = requests.get(search_url)
-            soup = BeautifulSoup(response.text, 'lxml')
-            pea_soup = soup.findAll('a', href=re.compile(medication.lower() + \
-                '\?druglabelid'), text=re.compile(medication.title()))
+        search_url = 'http://www.pdr.net/search-results?q=' + \
+            medication.lower()
+        response = requests.get(search_url)
+        soup = BeautifulSoup(response.text, 'lxml')
+        pea_soup = soup.findAll('a', href=re.compile(medication.lower() + \
+            '\?druglabelid'), text=re.compile(medication.title()))
 
-            # if found, grab the link to the drug page
-            if len(pea_soup) > 0:
-                soup_string = str(pea_soup.pop())
-                href = re.search('a href="(.*?)"', soup_string)
-                med_link = href.group(1)
-                break;
+        # if found, grab the link to the drug page
+        if len(pea_soup) > 0:
+            soup_string = str(pea_soup.pop())
+            href = re.search('a href="(.*?)"', soup_string)
+            med_link = href.group(1)
 
-            # otherwise, let the user know that the search failed
-            if page_number == 18:
-                print('Could not find "' + medication + '" on PDR.net!')
-                break;
-
-        # break out of the loop if the search failed
-        if med_link == '':
+        # otherwise, break out of the loop
+        else:
+            print('Could not find "' + medication + '" on PDR.net!')
             break;
 
         # otherwise, navigate to the drug summary page
@@ -44,7 +36,21 @@ def pdr_surf(medications):
         soup_string = str(pea_soup.pop())
         href = re.search('a href="(.*?)"', soup_string)
         reponse = requests.get(href.group(1))
+
+        # parse drug summary page for...
         soup = BeautifulSoup(response.text, 'lxml')
+
+        # medication name
+
+        # generic name
+
+        # class
+
+        # mechanism of action
+
+        # assessment
+
+        # contraindications
 
 # help text and launch of pdr_surf
 if __name__ == '__main__':
