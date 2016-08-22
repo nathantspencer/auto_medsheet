@@ -29,8 +29,8 @@ def pdr_surf(medications):
                 break;
 
             # otherwise, let the user know that the search failed
-            if page_number == 19:
-                print('Could not find ' + medication + ' on PDR.net!')
+            if page_number == 18:
+                print('Could not find "' + medication + '" on PDR.net!')
                 break;
 
         # break out of the loop if the search failed
