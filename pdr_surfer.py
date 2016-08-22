@@ -4,10 +4,15 @@ import re
 import code
 import sys
 
+# pdr_surf
 def pdr_surf(medications):
+
+    # for each medication passed...
     for medication in medications:
         med_link = ''
         first_letter = medication[0]
+
+        # search all pages of drugs starting with that letter
         for page_number in range(1,19):
             search_url = 'http://www.pdr.net/browse-by-drug-name?letter=' + \
                 first_letter + '&currentpage=' + str(page_number)
@@ -15,22 +20,33 @@ def pdr_surf(medications):
             soup = BeautifulSoup(response.text, 'lxml')
             pea_soup = soup.findAll('a', href=re.compile(medication.lower() + \
                 '\?druglabelid'), text=re.compile(medication.title()))
+
+            # if found, grab the link to the drug page
             if len(pea_soup) > 0:
                 soup_string = str(pea_soup.pop())
                 href = re.search('a href="(.*?)"', soup_string)
                 med_link = href.group(1)
                 break;
+
+            # otherwise, let the user know that the search failed
             if page_number == 19:
                 print('Could not find ' + medication + ' on PDR.net!')
                 break;
+
+        # break out of the loop if the search failed
         if med_link == '':
             break;
+
+        # otherwise, navigate to the drug summary page
         response = requests.get(med_link);
         soup = BeautifulSoup(response.text, 'lxml')
-        print(soup)
+        pea_soup = soup.findAll('a', text=re.compile('Drug Summary'))
+        soup_string = str(pea_soup.pop())
+        href = re.search('a href="(.*?)"', soup_string)
+        reponse = requests.get(href.group(1))
+        soup = BeautifulSoup(response.text, 'lxml')
 
-
-
+# help text and launch of pdr_surf
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('PDR_SURFER -- Written by Nathan Spencer 2016')
