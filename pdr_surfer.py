@@ -1,11 +1,22 @@
 from bs4 import BeautifulSoup
+import code
+from docx import Document
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.shared import Pt
 import requests
 import re
-import code
 import sys
 
 # pdr_surf function
-def pdr_surf(medications):
+def pdr_surf(file_name, medications):
+
+    # these little lists will hold our grabbed data
+    med = []
+    gen = []
+    cla = []
+    moa = []
+    nsg = []
+    adv = []
 
     # for each medication passed...
     for medication in medications:
@@ -29,6 +40,14 @@ def pdr_surf(medications):
         else:
             print('\nWARNING: Could not find ' + medication.title() + \
                 ' on PDR.net!')
+
+            # since we couldn't find the drug, we'll leave its data blank
+            med.append('')
+            gen.append('')
+            cla.append('')
+            moa.append('')
+            nsg.append('')
+            adv.append('')
             continue;
 
         # otherwise, navigate to the drug summary page
@@ -55,6 +74,7 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find medication name for ' + \
                 medication.title() + '.')
+        med.append(medication_name)
 
         # generic name
         generic_name = ''
@@ -68,6 +88,7 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find generic name for ' + \
                 medication.title() + '.')
+        gen.append(generic_name)
 
         # therapeutic class
         therapeutic_class = ''
@@ -79,6 +100,7 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find therapeutic class for ' + \
                 medication.title() + '.')
+        cla.append(therapeutic_class)
 
         # mechanism of action
         mech_of_action = ''
@@ -90,6 +112,7 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find mechanism of action for ' + \
                 medication.title() + '.')
+        moa.append(mech_of_action)
 
         # nursing assessment
         assessment = ''
@@ -101,6 +124,7 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find nursing assessment for ' + \
                 medication.title() + '.')
+        nsg.append(assessment)
 
         # adverse reactions
         adverse_reactions = ''
@@ -112,13 +136,48 @@ def pdr_surf(medications):
         else:
             print('WARNING: Could not find adverse reactions for ' + \
                 medication.title() + '.')
+        adv.append(adverse_reactions)
 
-    print('')
+    # all done, now lets write to a document
+    print('\nWriting information to ' + file_name + '.docx ...')
+    d = Document()
+
+    # we'll start off with our headers
+    table = d.add_table(rows=len(medications)+1, cols=8, style=d.styles['Table Grid'])
+    table.style.font.size = Pt(7)
+    table.cell(0, 0).text = 'Medication'
+    table.cell(0, 1).text = 'Generic Name'
+    table.cell(0, 2).text = 'Pt. Dose'
+    table.cell(0, 3).text = 'Class'
+    table.cell(0, 4).text = 'MOA'
+    table.cell(0, 5).text = 'Nsg.'
+    table.cell(0, 6).text = 'Why?'
+    table.cell(0, 7).text = 'Other'
+
+    # make those headers bold
+    for i in range(8):
+        table.cell(0,i).paragraphs[0].runs[0].bold = True
+        table.cell(0,i).paragraphs[0].runs[0].font.size = Pt(9)
+
+    # fill in the text fields
+    for i in range(1, len(medications)+1):
+        table.cell(i, 0).text = med[i-1]
+        table.cell(i, 1).text = gen[i-1]
+        table.cell(i, 3).text = cla[i-1]
+        table.cell(i, 4).text = moa[i-1]
+        table.cell(i, 5).text = nsg[i-1]
+        table.cell(i, 7).text = adv[i-1]
+
+    # save the file and we're all done!
+    d.save(file_name + '.docx')
+    print('PDR information written to ' + file_name + '.docx successfully!')
+    print('Good luck in your clinical!\n\t -- Nathan\n')
+
 
 # help text and launch of pdr_surf
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         print('PDR_SURFER -- Written by Nathan Spencer 2016')
-        print('Usage: python pdr_surfer.py [drugName1] [drugName2] [...]')
+        print('Usage: python pdr_surfer.py [fileNameWithoutExtension] [drugName] [anotherDrug]')
     else:
-        pdr_surf(sys.argv[1:])
+        pdr_surf(sys.argv[1], sys.argv[2:])
