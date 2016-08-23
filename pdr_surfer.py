@@ -20,13 +20,15 @@ def pdr_surf(medications):
 
         # if found, grab the link to the drug page
         if len(pea_soup) > 0:
+            print('Found ' + medication.title() + ' on PDR.net!')
             soup_string = str(pea_soup.pop())
             href = re.search('a href="(.*?)"', soup_string)
             med_link = href.group(1)
 
         # otherwise, break out of the loop
         else:
-            print('Could not find "' + medication + '" on PDR.net!')
+            print('WARNING: Could not find ' + medication.title() + \
+                ' on PDR.net!')
             break;
 
         # otherwise, navigate to the drug summary page
@@ -36,18 +38,23 @@ def pdr_surf(medications):
         soup_string = str(pea_soup.pop())
         href = re.search('a href="(.*?)"', soup_string)
         drug_summary_link = href.group(1)
-        print(drug_summary_link)
         response = requests.get(drug_summary_link)
 
         # parse drug summary page for...
         soup = BeautifulSoup(response.text, 'lxml')
 
         # medication name
+        medication_name = ''
         pea_soup = soup.findAll('div', { "class" : "drugSummaryLabel" }, \
             text=re.compile(medication.title()))
-        soup_string = str(pea_soup.pop())
-        medication_name = re.search('>(.*?)<', soup_string)
-        medication_name = medication_name.group(1)
+        if(len(pea_soup > 0)):
+            print('Found medication name for ' + medication.title() + '.')
+            soup_string = str(pea_soup.pop())
+            medication_name = re.search('>(.*?)<', soup_string)
+            medication_name = medication_name.group(1)
+        else:
+            print('WARNING: Could not find medication name for ' + \
+                medication.title() + '.')
 
         # generic name
 
