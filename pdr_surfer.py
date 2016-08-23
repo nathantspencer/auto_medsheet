@@ -145,19 +145,18 @@ def pdr_surf(file_name, medications):
     # we'll start off with our headers
     table = d.add_table(rows=len(medications)+1, cols=8, style=d.styles['Table Grid'])
     table.style.font.size = Pt(7)
-    table.cell(0, 0).text = 'Medication'
-    table.cell(0, 1).text = 'Generic Name'
-    table.cell(0, 2).text = 'Pt. Dose'
+    table.cell(0, 0).text = 'Med.'
+    table.cell(0, 1).text = 'Generic'
+    table.cell(0, 2).text = 'Dose'
     table.cell(0, 3).text = 'Class'
     table.cell(0, 4).text = 'MOA'
     table.cell(0, 5).text = 'Nsg.'
-    table.cell(0, 6).text = 'Why?'
+    table.cell(0, 6).text = 'Why'
     table.cell(0, 7).text = 'Other'
 
     # make those headers bold
     for i in range(8):
         table.cell(0,i).paragraphs[0].runs[0].bold = True
-        table.cell(0,i).paragraphs[0].runs[0].font.size = Pt(9)
 
     # fill in the text fields
     for i in range(1, len(medications)+1):
@@ -166,7 +165,7 @@ def pdr_surf(file_name, medications):
         table.cell(i, 3).text = cla[i-1]
         table.cell(i, 4).text = moa[i-1]
         table.cell(i, 5).text = nsg[i-1]
-        table.cell(i, 7).text = adv[i-1]
+        table.cell(i, 7).text = 'Adverse Effects: ' + adv[i-1]
 
     # save the file and we're all done!
     d.save(file_name + '.docx')
