@@ -69,7 +69,16 @@ def pdr_surf(medications):
             print('WARNING: Could not find generic name for ' + \
                 medication.title() + '.')
 
-        # class
+        # therapeutic class
+        therapeutic_class = ''
+        pea_soup = soup.findAll('h3', { "class" : "drugSummary" }, \
+            text=re.compile('THERAPEUTIC CLASS'))
+        if(len(pea_soup) > 0):
+            print('Found therapeutic class for ' + medication.title() + '.')
+            therapeutic_class = pea_soup.pop().nextSibling.nextSibling.text
+        else:
+            print('WARNING: Could not find therapeutic class for ' + \
+                medication.title() + '.')
 
         # mechanism of action
 
