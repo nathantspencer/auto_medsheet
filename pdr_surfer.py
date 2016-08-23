@@ -20,16 +20,16 @@ def pdr_surf(medications):
 
         # if found, grab the link to the drug page
         if len(pea_soup) > 0:
-            print('Found ' + medication.title() + ' on PDR.net!')
+            print('\nFound ' + medication.title() + ' on PDR.net!')
             soup_string = str(pea_soup.pop())
             href = re.search('a href="(.*?)"', soup_string)
             med_link = href.group(1)
 
         # otherwise, break out of the loop
         else:
-            print('WARNING: Could not find ' + medication.title() + \
+            print('\nWARNING: Could not find ' + medication.title() + \
                 ' on PDR.net!')
-            break;
+            continue;
 
         # otherwise, navigate to the drug summary page
         response = requests.get(med_link);
@@ -81,10 +81,39 @@ def pdr_surf(medications):
                 medication.title() + '.')
 
         # mechanism of action
+        mech_of_action = ''
+        pea_soup = soup.findAll('h3', { "class" : "drugSummary" }, \
+            text=re.compile('MECHANISM OF ACTION'))
+        if(len(pea_soup) > 0):
+            print('Found mechanism of action for ' + medication.title() + '.')
+            mech_of_action = pea_soup.pop().nextSibling.nextSibling.text
+        else:
+            print('WARNING: Could not find mechanism of action for ' + \
+                medication.title() + '.')
 
-        # assessment
+        # nursing assessment
+        assessment = ''
+        pea_soup = soup.findAll('h3', { "class" : "drugSummary" }, \
+            text=re.compile('ASSESSMENT'))
+        if(len(pea_soup) > 0):
+            print('Found nursing assessment for ' + medication.title() + '.')
+            assessment = pea_soup.pop().nextSibling.nextSibling.text
+        else:
+            print('WARNING: Could not find nursing assessment for ' + \
+                medication.title() + '.')
 
-        # contraindications
+        # adverse reactions
+        adverse_reactions = ''
+        pea_soup = soup.findAll('h3', { "class" : "drugSummary" }, \
+            text=re.compile('ADVERSE REACTIONS'))
+        if(len(pea_soup) > 0):
+            print('Found adverse reactions for ' + medication.title() + '.')
+            adverse_reactions = pea_soup.pop().nextSibling.nextSibling.text
+        else:
+            print('WARNING: Could not find adverse reactions for ' + \
+                medication.title() + '.')
+
+    print('')
 
 # help text and launch of pdr_surf
 if __name__ == '__main__':
