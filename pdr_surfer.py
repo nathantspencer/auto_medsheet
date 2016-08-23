@@ -47,7 +47,7 @@ def pdr_surf(medications):
         medication_name = ''
         pea_soup = soup.findAll('div', { "class" : "drugSummaryLabel" }, \
             text=re.compile(medication.title()))
-        if(len(pea_soup > 0)):
+        if(len(pea_soup) > 0):
             print('Found medication name for ' + medication.title() + '.')
             soup_string = str(pea_soup.pop())
             medication_name = re.search('>(.*?)<', soup_string)
@@ -57,6 +57,17 @@ def pdr_surf(medications):
                 medication.title() + '.')
 
         # generic name
+        generic_name = ''
+        pea_soup = soup.findAll('div', { "class" : "drugSummaryLabel" }, \
+            text=re.compile('\((.*?)\)'))
+        if(len(pea_soup) > 0):
+            print('Found generic name for ' + medication.title() + '.')
+            soup_string = str(pea_soup.pop())
+            generic_name = re.search('\((.*?)\)', soup_string)
+            generic_name = generic_name.group(1)
+        else:
+            print('WARNING: Could not find generic name for ' + \
+                medication.title() + '.')
 
         # class
 
