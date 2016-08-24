@@ -3,7 +3,7 @@ auto_medsheet is a tool for nursing students and others who need to quickly grab
 
 Using auto medsheet is simple. Call the script with the name of the file you'd like to create as the first argument, and the name brand drugs you'd like to grab information on as subsequent arguments. Call the line below...
 
-`$ python auto_medsheet.py fileToWrite xanax abilify ablivar`
+`$ python auto_medsheet.py fileToWrite xanax abilify ablavar`
 
 And the a document like this, named `fileToWrite.docx`, will be created in your auto_medsheet directory!
 
