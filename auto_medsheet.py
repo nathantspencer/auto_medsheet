@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import code
 from docx import Document
-from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.shared import Pt
 import requests
 import re
@@ -63,17 +62,7 @@ def pdr_surf(file_name, medications):
         soup = BeautifulSoup(response.text, 'lxml')
 
         # medication name
-        medication_name = ''
-        pea_soup = soup.findAll('div', { "class" : "drugSummaryLabel" }, \
-            text=re.compile(medication.title()))
-        if(len(pea_soup) > 0):
-            print('Found medication name for ' + medication.title() + '.')
-            soup_string = str(pea_soup.pop())
-            medication_name = re.search('>(.*?)<', soup_string)
-            medication_name = medication_name.group(1)
-        else:
-            print('WARNING: Could not find medication name for ' + \
-                medication.title() + '.')
+        medication_name = medication.title()
         med.append(medication_name)
 
         # generic name
