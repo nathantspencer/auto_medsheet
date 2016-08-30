@@ -26,6 +26,11 @@ def pdr_surf(file_name, medications):
         if(med_target_name == 'Lopressor'):
             med_target_name = 'Lopressor HCT'
             med_target_link = 'lopressor-hct'
+        if(med_target_name == 'Zofran'):
+            med_target_name = 'Zofran ODT Orally Disintegrating Tablets,' + \
+                ' Oral Solution, and Tablets'
+            med_target_link = 'zofran-odt-orally-disintegrating-tablets-oral' +\
+                '-solution-and-tablets'
 
         # hardcoded skippers for drugs with no search page
         skip_search = False
