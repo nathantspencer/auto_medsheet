@@ -20,21 +20,27 @@ def pdr_surf(file_name, medications):
     # for each medication passed...
     for medication in medications:
 
-        # hardcoded targets for finding common drugs
+        # hardcoded targets for finding common drugs without
+        # uncommon search text names
         med_target_name = medication.title()
         med_target_link = medication.lower()
         if(med_target_name == 'Lopressor'):
             med_target_name = 'Lopressor HCT'
             med_target_link = 'lopressor-hct'
-        if(med_target_name == 'Zofran'):
+        elif(med_target_name == 'Zofran'):
             med_target_name = 'Zofran ODT Orally Disintegrating Tablets,' + \
                 ' Oral Solution, and Tablets'
             med_target_link = 'zofran-odt-orally-disintegrating-tablets-oral' +\
                 '-solution-and-tablets'
+        elif(med_target_name == 'Norco'):
+            med_target_name = 'Norco 7.5/325 and 10/325'
+            med_link_name = 'norco-75-325-and-10-325'
 
         # hardcoded skippers for drugs with no search page
         skip_search = False
         if(med_target_name == 'Miralax'):
+            skip_search = True
+        if(med_target_name == 'Lidoderm'):
             skip_search = True
 
         # search all pages of drugs starting with that letter
@@ -68,6 +74,7 @@ def pdr_surf(file_name, medications):
 
         else:
             print('\nFound ' + medication.title() + ' on PDR.net!')
+            med_link = search_url
 
         # otherwise, navigate to the drug summary page
         response = requests.get(med_link);
