@@ -27,6 +27,11 @@ def pdr_surf(file_name, medications):
             med_target_name = 'Lopressor HCT'
             med_target_link = 'lopressor-hct'
 
+        # hardcoded skippers for drugs with no search page
+        skip_search = False
+        if(med_target_name == 'Miralax'):
+            skip_search = True
+
         # search all pages of drugs starting with that letter
         search_url = 'http://www.pdr.net/search-results?q=' + \
             medication.lower()
@@ -43,7 +48,7 @@ def pdr_surf(file_name, medications):
             med_link = href.group(1)
 
         # otherwise, break out of the loop
-        else:
+        elif not skip_search:
             print('\nWARNING: Could not find ' + medication.title() + \
                 ' on PDR.net!')
 
@@ -55,6 +60,9 @@ def pdr_surf(file_name, medications):
             nsg.append('')
             adv.append('')
             continue;
+
+        else:
+            print('\nFound ' + medication.title() + ' on PDR.net!')
 
         # otherwise, navigate to the drug summary page
         response = requests.get(med_link);
