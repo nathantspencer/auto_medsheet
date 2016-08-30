@@ -20,13 +20,20 @@ def pdr_surf(file_name, medications):
     # for each medication passed...
     for medication in medications:
 
+        # hardcoded targets for finding common drugs
+        med_target_name = medication.title()
+        med_target_link = medication.lower()
+        if(med_target_name == 'Lopressor'):
+            med_target_name = 'Lopressor HCT'
+            med_target_link = 'lopressor-hct'
+
         # search all pages of drugs starting with that letter
         search_url = 'http://www.pdr.net/search-results?q=' + \
             medication.lower()
         response = requests.get(search_url)
         soup = BeautifulSoup(response.text, 'lxml')
-        pea_soup = soup.findAll('a', href=re.compile(medication.lower() + \
-            '\?druglabelid'), text=re.compile(medication.title()))
+        pea_soup = soup.findAll('a', href=re.compile(med_target_link + \
+            '\?druglabelid'), text=re.compile(med_target_name))
 
         # if found, grab the link to the drug page
         if len(pea_soup) > 0:
